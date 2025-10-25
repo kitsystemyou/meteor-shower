@@ -1,0 +1,13 @@
+# Binaries
+test-server
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Logs
+*.log
+
+# Test outputs
+*.out
