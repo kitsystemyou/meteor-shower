@@ -6,7 +6,7 @@ import (
 )
 
 type Results struct {
-	URL         string
+	URLs        []string
 	RPS         int
 	Concurrency int
 	Duration    int
@@ -20,6 +20,7 @@ type RequestResult struct {
 	Duration   time.Duration
 	StatusCode int
 	Error      string
+	URL        string
 }
 
 type Statistics struct {
@@ -35,12 +36,14 @@ type Statistics struct {
 	P99Duration      time.Duration
 	RequestsPerSec   float64
 	StatusCodeCounts map[int]int
+	URLCounts        map[string]int
 }
 
 func (r *Results) CalculateStatistics() Statistics {
 	stats := Statistics{
 		TotalRequests:    len(r.Requests),
 		StatusCodeCounts: make(map[int]int),
+		URLCounts:        make(map[string]int),
 	}
 
 	if stats.TotalRequests == 0 {
@@ -56,6 +59,10 @@ func (r *Results) CalculateStatistics() Statistics {
 			stats.StatusCodeCounts[req.StatusCode]++
 		} else {
 			stats.FailedRequests++
+		}
+
+		if req.URL != "" {
+			stats.URLCounts[req.URL]++
 		}
 
 		durations = append(durations, req.Duration)

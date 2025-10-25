@@ -3,8 +3,23 @@ loadtest:
   # Target domain
   domain: "http://localhost:8080"
   
-  # Target endpoint
-  endpoint: "/"
+  # Endpoints with weights
+  # Weight determines the distribution of requests across endpoints
+  endpoints:
+    - path: "/"
+      weight: 1.0
+    - path: "/health"
+      weitht: 0.8
+    - path: "/slow"
+      weitht: 0.1
+  # Example: Multiple endpoints with different weights
+  # endpoints:
+  #   - path: "/"
+  #     weight: 1.0      # Highest frequency
+  #   - path: "/health"
+  #     weight: 0.5      # Medium frequency
+  #   - path: "/slow"
+  #     weight: 0.2      # Lowest frequency
   
   # Requests per second
   rps: 10

@@ -101,7 +101,12 @@ const htmlTemplate = `<!DOCTYPE html>
 <body>
     <div class="header">
         <h1>Load Test Report</h1>
-        <p><strong>Target URL:</strong> {{.URL}}</p>
+        <p><strong>Target Endpoints:</strong></p>
+        <ul style="margin: 5px 0; padding-left: 20px;">
+        {{range .URLs}}
+            <li>{{.}}</li>
+        {{end}}
+        </ul>
         <p><strong>Test Duration:</strong> {{.Stats.TotalDuration}}</p>
         <p><strong>Start Time:</strong> {{.StartTime.Format "2006-01-02 15:04:05"}}</p>
         <p><strong>End Time:</strong> {{.EndTime.Format "2006-01-02 15:04:05"}}</p>
@@ -191,6 +196,28 @@ const htmlTemplate = `<!DOCTYPE html>
                 {{range $code, $count := .Stats.StatusCodeCounts}}
                 <tr>
                     <td>{{$code}}</td>
+                    <td>{{$count}}</td>
+                    <td>{{printf "%.2f" (percentage $count $.Stats.TotalRequests)}}%</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Endpoint Distribution</h2>
+        <table class="status-table">
+            <thead>
+                <tr>
+                    <th>Endpoint</th>
+                    <th>Count</th>
+                    <th>Percentage</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range $url, $count := .Stats.URLCounts}}
+                <tr>
+                    <td>{{$url}}</td>
                     <td>{{$count}}</td>
                     <td>{{printf "%.2f" (percentage $count $.Stats.TotalRequests)}}%</td>
                 </tr>

@@ -127,13 +127,47 @@ mycli run --help
 
 ### 設定例
 
+#### 単一エンドポイント
+
 ```yaml
 loadtest:
   # ターゲットドメイン
   domain: "http://localhost:8080"
   
-  # ターゲットエンドポイント
-  endpoint: "/"
+  # エンドポイント
+  endpoints:
+    - path: "/"
+      weight: 1.0
+  
+  # 秒間リクエスト数
+  rps: 10
+  
+  # 並列クライアント数
+  concurrency: 1
+  
+  # テスト実行時間 (秒)
+  duration: 10
+  
+  # 出力形式 (html または json)
+  output: "html"
+```
+
+#### 複数エンドポイント (重み付き)
+
+```yaml
+loadtest:
+  # ターゲットドメイン
+  domain: "http://localhost:8080"
+  
+  # 複数エンドポイントと重み
+  # 重みに応じてリクエストが分散されます
+  endpoints:
+    - path: "/"
+      weight: 1.0      # 最も高い頻度
+    - path: "/health"
+      weight: 0.5      # 中程度の頻度
+    - path: "/slow"
+      weight: 0.2      # 低い頻度
   
   # 秒間リクエスト数
   rps: 10
@@ -153,7 +187,9 @@ loadtest:
 | 項目 | 型 | デフォルト | 説明 |
 |------|-----|-----------|------|
 | `loadtest.domain` | string | `"http://localhost:8080"` | ターゲットドメイン |
-| `loadtest.endpoint` | string | `"/"` | ターゲットエンドポイント |
+| `loadtest.endpoints` | array | `[{path: "/", weight: 1.0}]` | エンドポイント設定 (必須) |
+| `loadtest.endpoints[].path` | string | - | エンドポイントのパス |
+| `loadtest.endpoints[].weight` | float | `1.0` | リクエスト分散の重み |
 | `loadtest.rps` | int | `10` | 秒間リクエスト数 |
 | `loadtest.concurrency` | int | `1` | 並列クライアント数 |
 | `loadtest.duration` | int | `10` | テスト実行時間 (秒) |

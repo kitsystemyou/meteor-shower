@@ -13,19 +13,26 @@ type Config struct {
 }
 
 type LoadTestConfig struct {
-	Domain      string `yaml:"domain"`
-	Endpoint    string `yaml:"endpoint"`
-	RPS         int    `yaml:"rps"`
-	Concurrency int    `yaml:"concurrency"`
-	Duration    int    `yaml:"duration"`
-	Output      string `yaml:"output"`
+	Domain      string     `yaml:"domain"`
+	Endpoints   []Endpoint `yaml:"endpoints"`
+	RPS         int        `yaml:"rps"`
+	Concurrency int        `yaml:"concurrency"`
+	Duration    int        `yaml:"duration"`
+	Output      string     `yaml:"output"`
+}
+
+type Endpoint struct {
+	Path   string  `yaml:"path"`
+	Weight float64 `yaml:"weight"`
 }
 
 func LoadConfig(cfgFile string) (*Config, error) {
 	cfg := &Config{
 		LoadTest: LoadTestConfig{
-			Domain:      "http://localhost:8080",
-			Endpoint:    "/",
+			Domain: "http://localhost:8080",
+			Endpoints: []Endpoint{
+				{Path: "/", Weight: 1.0},
+			},
 			RPS:         10,
 			Concurrency: 1,
 			Duration:    10,

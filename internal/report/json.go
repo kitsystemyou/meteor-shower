@@ -7,7 +7,7 @@ import (
 )
 
 type JSONReport struct {
-	URL          string                 `json:"url"`
+	URLs         []string               `json:"urls"`
 	RPS          int                    `json:"rps"`
 	Concurrency  int                    `json:"concurrency"`
 	Duration     int                    `json:"duration"`
@@ -15,6 +15,7 @@ type JSONReport struct {
 	EndTime      string                 `json:"end_time"`
 	Statistics   JSONStatistics         `json:"statistics"`
 	StatusCodes  map[int]int            `json:"status_codes"`
+	URLCounts    map[string]int         `json:"url_counts"`
 	Requests     []JSONRequestResult    `json:"requests,omitempty"`
 }
 
@@ -37,13 +38,14 @@ type JSONRequestResult struct {
 	DurationMs  int64  `json:"duration_ms"`
 	StatusCode  int    `json:"status_code"`
 	Error       string `json:"error,omitempty"`
+	URL         string `json:"url,omitempty"`
 }
 
 func GenerateJSON(w io.Writer, results *Results) error {
 	stats := results.CalculateStatistics()
 
 	report := JSONReport{
-		URL:         results.URL,
+		URLs:        results.URLs,
 		RPS:         results.RPS,
 		Concurrency: results.Concurrency,
 		Duration:    results.Duration,
@@ -63,6 +65,7 @@ func GenerateJSON(w io.Writer, results *Results) error {
 			RequestsPerSec:   stats.RequestsPerSec,
 		},
 		StatusCodes: stats.StatusCodeCounts,
+		URLCounts:   stats.URLCounts,
 		Requests:    make([]JSONRequestResult, 0, len(results.Requests)),
 	}
 
@@ -73,6 +76,7 @@ func GenerateJSON(w io.Writer, results *Results) error {
 			DurationMs: req.Duration.Milliseconds(),
 			StatusCode: req.StatusCode,
 			Error:      req.Error,
+			URL:        req.URL,
 		})
 	}
 

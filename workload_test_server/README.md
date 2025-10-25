@@ -173,6 +173,41 @@ cd ..
 ./mycli run --config slow-test.yaml > report.html
 ```
 
+### 6. 複数エンドポイントの負荷試験
+
+設定ファイルを作成:
+
+```yaml
+# multi-endpoint-test.yaml
+loadtest:
+  domain: "http://localhost:8080"
+  endpoints:
+    - path: "/"
+      weight: 1.0
+    - path: "/health"
+      weight: 0.5
+    - path: "/slow"
+      weight: 0.2
+  rps: 20
+  concurrency: 5
+  duration: 10
+  output: "html"
+```
+
+実行:
+
+```bash
+# サーバー起動
+go run main.go
+
+# 負荷試験実行
+cd ..
+./mycli run --config multi-endpoint-test.yaml > report.html
+```
+
+レポートには各エンドポイントへのリクエスト分散状況が表示されます。
+重みに応じて、`/` が最も多く、`/health` が中程度、`/slow` が最も少ないリクエスト数になります。
+
 ## 動作確認
 
 サーバーが正常に起動しているか確認:
