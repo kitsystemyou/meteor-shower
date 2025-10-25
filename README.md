@@ -12,7 +12,7 @@ Go標準パッケージのみで構築された負荷試験ツール。
 ### ソースからビルド
 
 ```bash
-git clone https://github.com/example/meteor-shower.git
+git clone https://github.com/kitsystemyou/meteor-shower.git
 cd meteor-shower
 go build -o meteor-shower ./cmd/meteor-shower
 ```
@@ -20,8 +20,10 @@ go build -o meteor-shower ./cmd/meteor-shower
 ### Go install を使用
 
 ```bash
-go install github.com/example/meteor-shower/cmd/meteor-shower@latest
+go install github.com/kitsystemyou/meteor-shower/cmd/meteor-shower@latest
 ```
+
+インストール後、`$GOPATH/bin/meteor-shower` として利用可能になります。
 
 ## 使い方
 
@@ -272,9 +274,9 @@ JSON出力例:
 go build -o meteor-shower ./cmd/meteor-shower
 
 # リリース用ビルド (バージョン情報を埋め込み)
-go build -ldflags="-X 'github.com/example/meteor-shower/internal/cli.Version=1.0.0' \
-                    -X 'github.com/example/meteor-shower/internal/cli.GitCommit=$(git rev-parse HEAD)' \
-                    -X 'github.com/example/meteor-shower/internal/cli.BuildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)'" \
+go build -ldflags="-X 'github.com/kitsystemyou/meteor-shower/internal/cli.Version=1.0.0' \
+                    -X 'github.com/kitsystemyou/meteor-shower/internal/cli.GitCommit=$(git rev-parse HEAD)' \
+                    -X 'github.com/kitsystemyou/meteor-shower/internal/cli.BuildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)'" \
          -o meteor-shower ./cmd/meteor-shower
 ```
 
@@ -317,7 +319,7 @@ git push origin v1.0.0
 Go modulesとして公開する場合、ユーザーは以下のコマンドでインストールできます:
 
 ```bash
-go install github.com/example/meteor-shower/cmd/meteor-shower@latest
+go install github.com/kitsystemyou/meteor-shower/cmd/meteor-shower@latest
 ```
 
 ## ライセンス
