@@ -4,7 +4,9 @@
 *.dll
 *.so
 *.dylib
-meteor-shower
+
+# Built binary (in root directory only)
+/meteor-shower
 
 # Release builds
 dist/
