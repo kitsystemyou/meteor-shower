@@ -42,6 +42,8 @@ mycli run Bob --message "Good morning"
 
 すべてのコマンドで使用できるフラグ:
 
+**注意:** Go標準の`flag`パッケージを使用しているため、フラグは位置引数の前に指定する必要があります。
+
 | フラグ | 短縮形 | デフォルト | 説明 |
 |--------|--------|------------|------|
 | `--config` | - | `./config.yaml` | 設定ファイルのパス |
@@ -74,13 +76,13 @@ mycli run
 mycli run Alice
 
 # JSON形式で出力
-mycli run Bob --output json
+mycli run --output json Bob
 
 # 詳細モードで実行
-mycli run Charlie --verbose
+mycli run --verbose Charlie
 
-# カスタムメッセージ
-mycli run Dave --message "Good evening"
+# カスタムメッセージ (フラグは引数の前に指定)
+mycli run --message "Good evening" Dave
 
 # 設定ファイルを指定
 mycli run --config /path/to/config.yaml
@@ -168,10 +170,8 @@ mycli run
 │   └── mycli/          # メインエントリーポイント
 │       └── main.go
 ├── internal/
-│   ├── cmd/            # コマンド実装
-│   │   ├── root.go     # ルートコマンド
-│   │   ├── run.go      # runサブコマンド
-│   │   └── version.go  # versionサブコマンド
+│   ├── cli/            # CLI実装 (標準ライブラリのflagパッケージ使用)
+│   │   └── cli.go
 │   └── config/         # 設定管理
 │       └── config.go
 ├── config.yaml         # 設定ファイル例
@@ -187,9 +187,9 @@ mycli run
 go build -o mycli ./cmd/mycli
 
 # リリース用ビルド (バージョン情報を埋め込み)
-go build -ldflags="-X 'github.com/example/mycli/internal/cmd.Version=1.0.0' \
-                    -X 'github.com/example/mycli/internal/cmd.GitCommit=$(git rev-parse HEAD)' \
-                    -X 'github.com/example/mycli/internal/cmd.BuildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)'" \
+go build -ldflags="-X 'github.com/example/mycli/internal/cli.Version=1.0.0' \
+                    -X 'github.com/example/mycli/internal/cli.GitCommit=$(git rev-parse HEAD)' \
+                    -X 'github.com/example/mycli/internal/cli.BuildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)'" \
          -o mycli ./cmd/mycli
 ```
 
@@ -205,10 +205,11 @@ go test -cover ./...
 
 ### 依存関係
 
-このプロジェクトは以下のライブラリを使用しています:
+このプロジェクトはGo標準パッケージのみを使用しています:
 
-- [cobra](https://github.com/spf13/cobra) - CLIフレームワーク
-- [viper](https://github.com/spf13/viper) - 設定管理
+- `flag` - コマンドライン引数のパース
+- `encoding/json` - JSON出力
+- `gopkg.in/yaml.v3` - YAML設定ファイルのパース (準標準ライブラリ)
 
 ## パッケージ公開
 

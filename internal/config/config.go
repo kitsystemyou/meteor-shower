@@ -3,49 +3,73 @@ package config
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
-	"github.com/spf13/viper"
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	App AppConfig `mapstructure:"app"`
+	App AppConfig `yaml:"app"`
 }
 
 type AppConfig struct {
-	Name    string `mapstructure:"name"`
-	Message string `mapstructure:"message"`
-	Timeout int    `mapstructure:"timeout"`
-	Debug   bool   `mapstructure:"debug"`
+	Name    string `yaml:"name"`
+	Message string `yaml:"message"`
+	Timeout int    `yaml:"timeout"`
+	Debug   bool   `yaml:"debug"`
 }
 
 func LoadConfig(cfgFile string) (*Config, error) {
-	if cfgFile != "" {
-		viper.SetConfigFile(cfgFile)
-	} else {
-		viper.SetConfigName("config")
-		viper.SetConfigType("yaml")
-		viper.AddConfigPath(".")
-		viper.AddConfigPath("$HOME/.mycli")
+	cfg := &Config{
+		App: AppConfig{
+			Name:    "World",
+			Message: "Hello",
+			Timeout: 30,
+			Debug:   false,
+		},
 	}
 
-	viper.SetDefault("app.name", "World")
-	viper.SetDefault("app.message", "Hello")
-	viper.SetDefault("app.timeout", 30)
-	viper.SetDefault("app.debug", false)
+	configPath := cfgFile
+	if configPath == "" {
+		configPath = findConfigFile()
+	}
 
-	viper.AutomaticEnv()
-
-	if err := viper.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			return nil, fmt.Errorf("error reading config file: %w", err)
-		}
+	if configPath == "" {
 		fmt.Fprintf(os.Stderr, "Warning: No config file found, using defaults\n")
+		return cfg, nil
 	}
 
-	var cfg Config
-	if err := viper.Unmarshal(&cfg); err != nil {
-		return nil, fmt.Errorf("unable to decode config: %w", err)
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		return nil, fmt.Errorf("error reading config file: %w", err)
 	}
 
-	return &cfg, nil
+	if err := yaml.Unmarshal(data, cfg); err != nil {
+		return nil, fmt.Errorf("error parsing config file: %w", err)
+	}
+
+	return cfg, nil
+}
+
+func findConfigFile() string {
+	candidates := []string{
+		"config.yaml",
+		"config.yml",
+	}
+
+	homeDir, err := os.UserHomeDir()
+	if err == nil {
+		candidates = append(candidates,
+			filepath.Join(homeDir, ".mycli", "config.yaml"),
+			filepath.Join(homeDir, ".mycli", "config.yml"),
+		)
+	}
+
+	for _, path := range candidates {
+		if _, err := os.Stat(path); err == nil {
+			return path
+		}
+	}
+
+	return ""
 }
