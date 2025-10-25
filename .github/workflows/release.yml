@@ -1,0 +1,137 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Build binaries
+        run: |
+          VERSION=${{ steps.get_version.outputs.VERSION }}
+          GIT_COMMIT=$(git rev-parse HEAD)
+          BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          
+          mkdir -p dist
+          
+          # Build function
+          build() {
+            GOOS=$1
+            GOARCH=$2
+            OUTPUT=$3
+            
+            echo "Building for ${GOOS}/${GOARCH}..."
+            GOOS=${GOOS} GOARCH=${GOARCH} go build \
+              -ldflags="-X 'github.com/kitsystemyou/meteor-shower/internal/cli.Version=${VERSION}' \
+                        -X 'github.com/kitsystemyou/meteor-shower/internal/cli.GitCommit=${GIT_COMMIT}' \
+                        -X 'github.com/kitsystemyou/meteor-shower/internal/cli.BuildDate=${BUILD_DATE}'" \
+              -o ${OUTPUT} ./cmd/meteor-shower
+          }
+          
+          # Build for each platform
+          build linux amd64 dist/meteor-shower-linux-amd64
+          build linux arm64 dist/meteor-shower-linux-arm64
+          build darwin amd64 dist/meteor-shower-darwin-amd64
+          build darwin arm64 dist/meteor-shower-darwin-arm64
+          build windows amd64 dist/meteor-shower-windows-amd64.exe
+
+      - name: Create archives
+        run: |
+          cd dist
+          
+          # tar.gz for Linux/macOS
+          tar -czf meteor-shower-linux-amd64.tar.gz meteor-shower-linux-amd64
+          tar -czf meteor-shower-linux-arm64.tar.gz meteor-shower-linux-arm64
+          tar -czf meteor-shower-darwin-amd64.tar.gz meteor-shower-darwin-amd64
+          tar -czf meteor-shower-darwin-arm64.tar.gz meteor-shower-darwin-arm64
+          
+          # zip for Windows
+          zip meteor-shower-windows-amd64.zip meteor-shower-windows-amd64.exe
+          
+          # Generate checksums
+          sha256sum meteor-shower-*.tar.gz meteor-shower-*.zip > checksums.txt
+          
+          cd ..
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          cat << EOF > release_notes.md
+          ## Installation
+
+          ### Using Go install
+          \`\`\`bash
+          go install github.com/kitsystemyou/meteor-shower/cmd/meteor-shower@${{ steps.get_version.outputs.VERSION }}
+          \`\`\`
+
+          ### Download Binary
+
+          Choose the appropriate binary for your platform:
+
+          - **Linux (amd64)**: \`meteor-shower-linux-amd64.tar.gz\`
+          - **Linux (arm64)**: \`meteor-shower-linux-arm64.tar.gz\`
+          - **macOS (Intel)**: \`meteor-shower-darwin-amd64.tar.gz\`
+          - **macOS (Apple Silicon)**: \`meteor-shower-darwin-arm64.tar.gz\`
+          - **Windows**: \`meteor-shower-windows-amd64.zip\`
+
+          #### Linux/macOS
+          \`\`\`bash
+          # Download and extract
+          tar -xzf meteor-shower-*.tar.gz
+
+          # Make executable and move to PATH
+          chmod +x meteor-shower-*
+          sudo mv meteor-shower-* /usr/local/bin/meteor-shower
+
+          # Verify installation
+          meteor-shower version
+          \`\`\`
+
+          #### Windows
+          1. Download \`meteor-shower-windows-amd64.zip\`
+          2. Extract the ZIP file
+          3. Add the directory to your PATH
+          4. Run \`meteor-shower.exe version\` to verify
+
+          ### Verify Checksums
+          \`\`\`bash
+          sha256sum -c checksums.txt
+          \`\`\`
+
+          ## What's Changed
+          See the [CHANGELOG](https://github.com/kitsystemyou/meteor-shower/blob/main/CHANGELOG.md) for details.
+          EOF
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: release_notes.md
+          files: |
+            dist/meteor-shower-linux-amd64.tar.gz
+            dist/meteor-shower-linux-arm64.tar.gz
+            dist/meteor-shower-darwin-amd64.tar.gz
+            dist/meteor-shower-darwin-arm64.tar.gz
+            dist/meteor-shower-windows-amd64.zip
+            dist/checksums.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
