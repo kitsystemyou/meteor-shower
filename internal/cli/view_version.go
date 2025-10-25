@@ -19,7 +19,7 @@ func (c *CLI) versionCommand(args []string) error {
 		usage := `Display the version, git commit, and build date of the CLI tool.
 
 Usage:
-  mycli version
+  meteor-shower version
 `
 		fmt.Fprint(c.stderr, usage)
 	}
@@ -28,7 +28,7 @@ Usage:
 		return err
 	}
 
-	fmt.Fprintf(c.stdout, "mycli version %s\n", Version)
+	fmt.Fprintf(c.stdout, "meteor-shower version %s\n", Version)
 	fmt.Fprintf(c.stdout, "Git commit: %s\n", GitCommit)
 	fmt.Fprintf(c.stdout, "Built: %s\n", BuildDate)
 

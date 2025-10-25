@@ -5,10 +5,10 @@ import (
 )
 
 func (c *CLI) printUsage() {
-	usage := `mycli is a load testing tool built with Go standard library.
+	usage := `meteor-shower is a load testing tool built with Go standard library.
 
 Usage:
-  mycli [command] [flags]
+  meteor-shower [command] [flags]
 
 Available Commands:
   run         Run load test against target endpoint
@@ -21,7 +21,7 @@ Global Flags:
   --concurrency int      number of concurrent clients (overrides config)
   -o, --output string    output format: html, json (overrides config)
 
-Use "mycli help [command]" for more information about a command.
+Use "meteor-shower help [command]" for more information about a command.
 `
 	fmt.Fprint(c.stdout, usage)
 }

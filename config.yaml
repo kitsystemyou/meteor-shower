@@ -1,4 +1,4 @@
-# mycli configuration file for load testing
+# meteor-shower configuration file for load testing
 loadtest:
   # Target domain
   domain: "http://localhost:8080"
@@ -8,10 +8,7 @@ loadtest:
   endpoints:
     - path: "/"
       weight: 1.0
-    - path: "/health"
-      weitht: 0.8
-    - path: "/slow"
-      weitht: 0.1
+  
   # Example: Multiple endpoints with different weights
   # endpoints:
   #   - path: "/"

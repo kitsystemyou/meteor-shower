@@ -71,8 +71,8 @@ func findConfigFile() string {
 	homeDir, err := os.UserHomeDir()
 	if err == nil {
 		candidates = append(candidates,
-			filepath.Join(homeDir, ".mycli", "config.yaml"),
-			filepath.Join(homeDir, ".mycli", "config.yml"),
+			filepath.Join(homeDir, ".meteor-shower", "config.yaml"),
+			filepath.Join(homeDir, ".meteor-shower", "config.yml"),
 		)
 	}
 

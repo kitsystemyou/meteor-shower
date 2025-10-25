@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/example/mycli/internal/config"
-	"github.com/example/mycli/internal/report"
+	"github.com/kitsystemyou/meteor-shower/internal/config"
+	"github.com/kitsystemyou/meteor-shower/internal/report"
 )
 
 func (c *CLI) runCommand(args []string) error {
@@ -27,7 +27,7 @@ func (c *CLI) runCommand(args []string) error {
 		usage := `Run executes load test against the target endpoint.
 
 Usage:
-  mycli run [flags]
+  meteor-shower run [flags]
 
 Flags:
   --rps int              requests per second (overrides config)

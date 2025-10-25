@@ -1,4 +1,4 @@
-# mycli
+# meteor-shower
 
 Go標準パッケージのみで構築された負荷試験ツール。
 
@@ -12,15 +12,15 @@ Go標準パッケージのみで構築された負荷試験ツール。
 ### ソースからビルド
 
 ```bash
-git clone https://github.com/example/mycli.git
-cd mycli
-go build -o mycli ./cmd/mycli
+git clone https://github.com/example/meteor-shower.git
+cd meteor-shower
+go build -o meteor-shower ./cmd/meteor-shower
 ```
 
 ### Go install を使用
 
 ```bash
-go install github.com/example/mycli/cmd/mycli@latest
+go install github.com/example/meteor-shower/cmd/meteor-shower@latest
 ```
 
 ## 使い方
@@ -29,19 +29,19 @@ go install github.com/example/mycli/cmd/mycli@latest
 
 ```bash
 # デフォルト設定で負荷試験を実行
-mycli run
+meteor-shower run
 
 # RPSを指定して実行
-mycli run --rps 100
+meteor-shower run --rps 100
 
 # 並列数を指定して実行
-mycli run --concurrency 10
+meteor-shower run --concurrency 10
 
 # JSON形式で結果を出力
-mycli run -o json
+meteor-shower run -o json
 
 # すべてのパラメータを指定
-mycli run --rps 50 --concurrency 5 -o html
+meteor-shower run --rps 50 --concurrency 5 -o html
 ```
 
 ### グローバルフラグ
@@ -62,7 +62,7 @@ mycli run --rps 50 --concurrency 5 -o html
 指定されたエンドポイントに対して負荷試験を実行します。
 
 ```bash
-mycli run [flags]
+meteor-shower run [flags]
 ```
 
 **フラグ:**
@@ -74,22 +74,22 @@ mycli run [flags]
 
 ```bash
 # デフォルト設定で実行
-mycli run
+meteor-shower run
 
 # RPSを指定
-mycli run --rps 100
+meteor-shower run --rps 100
 
 # 並列数を指定
-mycli run --concurrency 10
+meteor-shower run --concurrency 10
 
 # JSON形式で出力
-mycli run -o json
+meteor-shower run -o json
 
 # すべてのパラメータを指定
-mycli run --rps 50 --concurrency 5 -o html
+meteor-shower run --rps 50 --concurrency 5 -o html
 
 # カスタム設定ファイルを使用
-mycli run --config /path/to/config.yaml
+meteor-shower run --config /path/to/config.yaml
 ```
 
 #### `version` - バージョン情報を表示
@@ -97,7 +97,7 @@ mycli run --config /path/to/config.yaml
 CLIツールのバージョン情報を表示します。
 
 ```bash
-mycli version
+meteor-shower version
 ```
 
 #### `help` - ヘルプを表示
@@ -106,11 +106,11 @@ mycli version
 
 ```bash
 # 全体のヘルプ
-mycli help
+meteor-shower help
 
 # 特定のコマンドのヘルプ
-mycli help run
-mycli run --help
+meteor-shower help run
+meteor-shower run --help
 ```
 
 ## 設定ファイル
@@ -123,7 +123,7 @@ mycli run --help
 
 1. `--config` フラグで指定されたパス
 2. カレントディレクトリの `config.yaml`
-3. `$HOME/.mycli/config.yaml`
+3. `$HOME/.meteor-shower/config.yaml`
 
 ### 設定例
 
@@ -206,7 +206,7 @@ HTMLレポートには以下の情報が含まれます:
 - ステータスコード分布
 
 ```bash
-mycli run -o html > report.html
+meteor-shower run -o html > report.html
 ```
 
 ### JSON形式
@@ -214,7 +214,7 @@ mycli run -o html > report.html
 JSON形式では、すべてのリクエスト結果を含む詳細なデータが出力されます:
 
 ```bash
-mycli run -o json > report.json
+meteor-shower run -o json > report.json
 ```
 
 JSON出力例:
@@ -245,7 +245,7 @@ JSON出力例:
 ```
 .
 ├── cmd/
-│   └── mycli/          # メインエントリーポイント
+│   └── meteor-shower/          # メインエントリーポイント
 │       └── main.go
 ├── internal/
 │   ├── cli/            # CLI実装
@@ -269,13 +269,13 @@ JSON出力例:
 
 ```bash
 # 開発用ビルド
-go build -o mycli ./cmd/mycli
+go build -o meteor-shower ./cmd/meteor-shower
 
 # リリース用ビルド (バージョン情報を埋め込み)
-go build -ldflags="-X 'github.com/example/mycli/internal/cli.Version=1.0.0' \
-                    -X 'github.com/example/mycli/internal/cli.GitCommit=$(git rev-parse HEAD)' \
-                    -X 'github.com/example/mycli/internal/cli.BuildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)'" \
-         -o mycli ./cmd/mycli
+go build -ldflags="-X 'github.com/example/meteor-shower/internal/cli.Version=1.0.0' \
+                    -X 'github.com/example/meteor-shower/internal/cli.GitCommit=$(git rev-parse HEAD)' \
+                    -X 'github.com/example/meteor-shower/internal/cli.BuildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)'" \
+         -o meteor-shower ./cmd/meteor-shower
 ```
 
 ### テスト
@@ -317,7 +317,7 @@ git push origin v1.0.0
 Go modulesとして公開する場合、ユーザーは以下のコマンドでインストールできます:
 
 ```bash
-go install github.com/example/mycli/cmd/mycli@latest
+go install github.com/example/meteor-shower/cmd/meteor-shower@latest
 ```
 
 ## ライセンス

@@ -1,4 +1,4 @@
-module github.com/example/mycli
+module github.com/kitsystemyou/meteor-shower
 
 go 1.23.0
 

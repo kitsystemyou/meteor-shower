@@ -4,7 +4,7 @@
 
 ## 概要
 
-このサーバーは、負荷試験ツール (mycli) のテスト用に設計されています。
+このサーバーは、負荷試験ツール (meteor-shower) のテスト用に設計されています。
 レスポンス遅延、エラー率、ランダム遅延などを設定可能で、様々な負荷試験シナリオをシミュレートできます。
 
 ## 使い方
@@ -111,7 +111,7 @@ go run main.go
 
 # 別のターミナルで負荷試験実行
 cd ..
-./mycli run --rps 10 --concurrency 2 -o html > report.html
+./meteor-shower run --rps 10 --concurrency 2 -o html > report.html
 ```
 
 ### 2. 高負荷シナリオ
@@ -122,7 +122,7 @@ go run main.go -delay 5
 
 # 高RPSで負荷試験
 cd ..
-./mycli run --rps 100 --concurrency 10 -o json > report.json
+./meteor-shower run --rps 100 --concurrency 10 -o json > report.json
 ```
 
 ### 3. エラーハンドリングテスト
@@ -133,7 +133,7 @@ go run main.go -error-rate 0.2
 
 # 負荷試験実行
 cd ..
-./mycli run --rps 20 --concurrency 5 -o html > report.html
+./meteor-shower run --rps 20 --concurrency 5 -o html > report.html
 ```
 
 ### 4. 遅延バリエーションテスト
@@ -144,7 +144,7 @@ go run main.go -delay 50 -random-delay
 
 # 負荷試験実行
 cd ..
-./mycli run --rps 15 --concurrency 3 -o html > report.html
+./meteor-shower run --rps 15 --concurrency 3 -o html > report.html
 ```
 
 ### 5. 遅いエンドポイントのテスト
@@ -170,7 +170,7 @@ go run main.go
 
 # 負荷試験実行
 cd ..
-./mycli run --config slow-test.yaml > report.html
+./meteor-shower run --config slow-test.yaml > report.html
 ```
 
 ### 6. 複数エンドポイントの負荷試験
@@ -202,7 +202,7 @@ go run main.go
 
 # 負荷試験実行
 cd ..
-./mycli run --config multi-endpoint-test.yaml > report.html
+./meteor-shower run --config multi-endpoint-test.yaml > report.html
 ```
 
 レポートには各エンドポイントへのリクエスト分散状況が表示されます。
