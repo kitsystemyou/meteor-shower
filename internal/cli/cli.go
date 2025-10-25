@@ -10,12 +10,6 @@ import (
 	"github.com/example/mycli/internal/config"
 )
 
-var (
-	Version   = "dev"
-	GitCommit = "none"
-	BuildDate = "unknown"
-)
-
 type CLI struct {
 	args   []string
 	stdout io.Writer
@@ -54,31 +48,6 @@ func (c *CLI) Run() error {
 		c.printUsage()
 		return fmt.Errorf("unknown command: %s", command)
 	}
-}
-
-func (c *CLI) printUsage() {
-	usage := `mycli is a sample CLI tool that demonstrates:
-- Command-line argument parsing
-- YAML configuration file support
-- Subcommands with help documentation
-- Best practices for Go CLI applications
-
-Usage:
-  mycli [command] [flags]
-
-Available Commands:
-  run         Run the main application logic
-  version     Print the version information
-  help        Help about any command
-
-Global Flags:
-  --config string   config file (default is ./config.yaml)
-  -o, --output string   output format (text, json) (default "text")
-  -v, --verbose         verbose output
-
-Use "mycli help [command]" for more information about a command.
-`
-	fmt.Fprint(c.stdout, usage)
 }
 
 func (c *CLI) runCommand(args []string) error {
@@ -165,41 +134,4 @@ Global Flags:
 	}
 
 	return nil
-}
-
-func (c *CLI) versionCommand(args []string) error {
-	fs := flag.NewFlagSet("version", flag.ContinueOnError)
-	fs.SetOutput(c.stderr)
-
-	fs.Usage = func() {
-		usage := `Display the version, git commit, and build date of the CLI tool.
-
-Usage:
-  mycli version
-`
-		fmt.Fprint(c.stderr, usage)
-	}
-
-	if err := fs.Parse(args); err != nil {
-		return err
-	}
-
-	fmt.Fprintf(c.stdout, "mycli version %s\n", Version)
-	fmt.Fprintf(c.stdout, "Git commit: %s\n", GitCommit)
-	fmt.Fprintf(c.stdout, "Built: %s\n", BuildDate)
-
-	return nil
-}
-
-func (c *CLI) helpCommand(command string) error {
-	switch command {
-	case "run":
-		return c.runCommand([]string{"--help"})
-	case "version":
-		return c.versionCommand([]string{"--help"})
-	default:
-		fmt.Fprintf(c.stderr, "Unknown command: %s\n\n", command)
-		c.printUsage()
-		return fmt.Errorf("unknown command: %s", command)
-	}
 }
