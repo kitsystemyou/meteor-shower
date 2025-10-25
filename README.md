@@ -1,6 +1,6 @@
 # mycli
 
-A sample CLI tool built with Go that demonstrates best practices for command-line applications.
+Go標準パッケージのみで構築された負荷試験ツール。
 
 ## 前提条件
 
@@ -28,63 +28,67 @@ go install github.com/example/mycli/cmd/mycli@latest
 ### 基本的な使い方
 
 ```bash
-# デフォルト設定で実行
+# デフォルト設定で負荷試験を実行
 mycli run
 
-# 名前を指定して実行
-mycli run Alice
+# RPSを指定して実行
+mycli run --rps 100
 
-# カスタムメッセージを指定
-mycli run Bob --message "Good morning"
+# 並列数を指定して実行
+mycli run --concurrency 10
+
+# JSON形式で結果を出力
+mycli run -o json
+
+# すべてのパラメータを指定
+mycli run --rps 50 --concurrency 5 -o html
 ```
 
 ### グローバルフラグ
 
 すべてのコマンドで使用できるフラグ:
 
-**注意:** Go標準の`flag`パッケージを使用しているため、フラグは位置引数の前に指定する必要があります。
-
 | フラグ | 短縮形 | デフォルト | 説明 |
 |--------|--------|------------|------|
 | `--config` | - | `./config.yaml` | 設定ファイルのパス |
-| `--output` | `-o` | `text` | 出力形式 (text, json) |
-| `--verbose` | `-v` | `false` | 詳細な出力を表示 |
+| `--rps` | - | 設定ファイル参照 | 秒間リクエスト数 (設定ファイルより優先) |
+| `--concurrency` | - | 設定ファイル参照 | 並列クライアント数 (設定ファイルより優先) |
+| `--output` | `-o` | 設定ファイル参照 | 出力形式: html, json (設定ファイルより優先) |
 
 ### サブコマンド
 
-#### `run` - メインロジックを実行
+#### `run` - 負荷試験を実行
 
-アプリケーションのメインロジックを実行します。
+指定されたエンドポイントに対して負荷試験を実行します。
 
 ```bash
-mycli run [name] [flags]
+mycli run [flags]
 ```
 
-**引数:**
-- `name` (オプション): 挨拶に使用する名前
-
 **フラグ:**
-- `-m, --message string`: カスタムメッセージを指定
+- `--rps int`: 秒間リクエスト数 (設定ファイルより優先)
+- `--concurrency int`: 並列クライアント数 (設定ファイルより優先)
+- `-o, --output string`: 出力形式 (html, json)
 
 **例:**
 
 ```bash
-# 基本的な実行
+# デフォルト設定で実行
 mycli run
 
-# 名前を指定
-mycli run Alice
+# RPSを指定
+mycli run --rps 100
+
+# 並列数を指定
+mycli run --concurrency 10
 
 # JSON形式で出力
-mycli run --output json Bob
+mycli run -o json
 
-# 詳細モードで実行
-mycli run --verbose Charlie
+# すべてのパラメータを指定
+mycli run --rps 50 --concurrency 5 -o html
 
-# カスタムメッセージ (フラグは引数の前に指定)
-mycli run --message "Good evening" Dave
-
-# 設定ファイルを指定
+# カスタム設定ファイルを使用
 mycli run --config /path/to/config.yaml
 ```
 
@@ -124,40 +128,78 @@ mycli run --help
 ### 設定例
 
 ```yaml
-app:
-  # 挨拶に使用する名前
-  name: "World"
+loadtest:
+  # ターゲットドメイン
+  domain: "http://localhost:8080"
   
-  # メッセージのプレフィックス
-  message: "Hello"
+  # ターゲットエンドポイント
+  endpoint: "/"
   
-  # タイムアウト (秒)
-  timeout: 30
+  # 秒間リクエスト数
+  rps: 10
   
-  # デバッグモードを有効化
-  debug: false
+  # 並列クライアント数
+  concurrency: 1
+  
+  # テスト実行時間 (秒)
+  duration: 10
+  
+  # 出力形式 (html または json)
+  output: "html"
 ```
 
 ### 設定項目
 
 | 項目 | 型 | デフォルト | 説明 |
 |------|-----|-----------|------|
-| `app.name` | string | `"World"` | 挨拶に使用するデフォルトの名前 |
-| `app.message` | string | `"Hello"` | メッセージのプレフィックス |
-| `app.timeout` | int | `30` | タイムアウト時間 (秒) |
-| `app.debug` | bool | `false` | デバッグモードの有効化 |
+| `loadtest.domain` | string | `"http://localhost:8080"` | ターゲットドメイン |
+| `loadtest.endpoint` | string | `"/"` | ターゲットエンドポイント |
+| `loadtest.rps` | int | `10` | 秒間リクエスト数 |
+| `loadtest.concurrency` | int | `1` | 並列クライアント数 |
+| `loadtest.duration` | int | `10` | テスト実行時間 (秒) |
+| `loadtest.output` | string | `"html"` | 出力形式 (html, json) |
 
-## 環境変数
+## 出力形式
 
-設定は環境変数でも上書きできます:
+### HTML形式
+
+HTMLレポートには以下の情報が含まれます:
+- テスト設定 (URL, RPS, 並列数, 実行時間)
+- サマリー (総リクエスト数, 成功/失敗数, 実際のRPS)
+- レスポンスタイム統計 (最小/平均/中央値/95パーセンタイル/99パーセンタイル/最大)
+- ステータスコード分布
 
 ```bash
-export APP_NAME="Alice"
-export APP_MESSAGE="Hi"
-export APP_TIMEOUT=60
-export APP_DEBUG=true
+mycli run -o html > report.html
+```
 
-mycli run
+### JSON形式
+
+JSON形式では、すべてのリクエスト結果を含む詳細なデータが出力されます:
+
+```bash
+mycli run -o json > report.json
+```
+
+JSON出力例:
+```json
+{
+  "url": "http://localhost:8080/",
+  "rps": 10,
+  "concurrency": 1,
+  "duration": 10,
+  "statistics": {
+    "total_requests": 100,
+    "success_requests": 100,
+    "failed_requests": 0,
+    "avg_duration_ms": 15,
+    "p95_duration_ms": 25,
+    "requests_per_sec": 10.5
+  },
+  "status_codes": {
+    "200": 100
+  }
+}
 ```
 
 ## 開発
@@ -170,10 +212,17 @@ mycli run
 │   └── mycli/          # メインエントリーポイント
 │       └── main.go
 ├── internal/
-│   ├── cli/            # CLI実装 (標準ライブラリのflagパッケージ使用)
-│   │   └── cli.go
-│   └── config/         # 設定管理
-│       └── config.go
+│   ├── cli/            # CLI実装
+│   │   ├── cli.go      # メインCLIロジック
+│   │   ├── view_run.go # 負荷試験実行
+│   │   ├── view_version.go # バージョン表示
+│   │   └── view_help.go    # ヘルプ表示
+│   ├── config/         # 設定管理
+│   │   └── config.go
+│   └── report/         # レポート生成
+│       ├── report.go   # 統計計算
+│       ├── html.go     # HTMLレポート
+│       └── json.go     # JSONレポート
 ├── config.yaml         # 設定ファイル例
 ├── go.mod
 ├── go.sum
@@ -208,7 +257,11 @@ go test -cover ./...
 このプロジェクトはGo標準パッケージのみを使用しています:
 
 - `flag` - コマンドライン引数のパース
-- `encoding/json` - JSON出力
+- `net/http` - HTTPリクエスト送信
+- `html/template` - HTMLレポート生成
+- `encoding/json` - JSONレポート生成
+- `time` - タイミング制御と計測
+- `sync` - 並行処理制御
 - `gopkg.in/yaml.v3` - YAML設定ファイルのパース (準標準ライブラリ)
 
 ## パッケージ公開

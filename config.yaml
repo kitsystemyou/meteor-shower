@@ -1,13 +1,19 @@
-# mycli configuration file
-app:
-  # Name to use in greetings
-  name: "World"
+# mycli configuration file for load testing
+loadtest:
+  # Target domain
+  domain: "http://localhost:8080"
   
-  # Message prefix for greetings
-  message: "Hello"
+  # Target endpoint
+  endpoint: "/"
   
-  # Timeout in seconds
-  timeout: 30
+  # Requests per second
+  rps: 10
   
-  # Enable debug mode
-  debug: false
+  # Number of concurrent clients
+  concurrency: 1
+  
+  # Test duration in seconds
+  duration: 10
+  
+  # Output format (html or json)
+  output: "html"

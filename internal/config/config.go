@@ -9,23 +9,27 @@ import (
 )
 
 type Config struct {
-	App AppConfig `yaml:"app"`
+	LoadTest LoadTestConfig `yaml:"loadtest"`
 }
 
-type AppConfig struct {
-	Name    string `yaml:"name"`
-	Message string `yaml:"message"`
-	Timeout int    `yaml:"timeout"`
-	Debug   bool   `yaml:"debug"`
+type LoadTestConfig struct {
+	Domain      string `yaml:"domain"`
+	Endpoint    string `yaml:"endpoint"`
+	RPS         int    `yaml:"rps"`
+	Concurrency int    `yaml:"concurrency"`
+	Duration    int    `yaml:"duration"`
+	Output      string `yaml:"output"`
 }
 
 func LoadConfig(cfgFile string) (*Config, error) {
 	cfg := &Config{
-		App: AppConfig{
-			Name:    "World",
-			Message: "Hello",
-			Timeout: 30,
-			Debug:   false,
+		LoadTest: LoadTestConfig{
+			Domain:      "http://localhost:8080",
+			Endpoint:    "/",
+			RPS:         10,
+			Concurrency: 1,
+			Duration:    10,
+			Output:      "html",
 		},
 	}
 

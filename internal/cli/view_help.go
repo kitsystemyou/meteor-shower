@@ -5,24 +5,21 @@ import (
 )
 
 func (c *CLI) printUsage() {
-	usage := `mycli is a sample CLI tool that demonstrates:
-- Command-line argument parsing
-- YAML configuration file support
-- Subcommands with help documentation
-- Best practices for Go CLI applications
+	usage := `mycli is a load testing tool built with Go standard library.
 
 Usage:
   mycli [command] [flags]
 
 Available Commands:
-  run         Run the main application logic
+  run         Run load test against target endpoint
   version     Print the version information
   help        Help about any command
 
 Global Flags:
-  --config string   config file (default is ./config.yaml)
-  -o, --output string   output format (text, json) (default "text")
-  -v, --verbose         verbose output
+  --config string        config file (default is ./config.yaml)
+  --rps int              requests per second (overrides config)
+  --concurrency int      number of concurrent clients (overrides config)
+  -o, --output string    output format: html, json (overrides config)
 
 Use "mycli help [command]" for more information about a command.
 `
