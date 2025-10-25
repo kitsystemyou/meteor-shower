@@ -1,0 +1,13 @@
+# mycli configuration file
+app:
+  # Name to use in greetings
+  name: "World"
+  
+  # Message prefix for greetings
+  message: "Hello"
+  
+  # Timeout in seconds
+  timeout: 30
+  
+  # Enable debug mode
+  debug: false
