@@ -25,7 +25,41 @@ go install github.com/kitsystemyou/meteor-shower/cmd/meteor-shower@latest
 
 インストール後、`$GOPATH/bin/meteor-shower` として利用可能になります。
 
+## クイックスタート
+
+```bash
+# 1. 設定ファイルを生成
+meteor-shower config init
+
+# 2. config.yaml を編集（オプション）
+# ターゲットURL、RPS、並列数などを設定
+
+# 3. 負荷試験を実行
+meteor-shower run
+
+# 4. レポートを確認
+# HTMLレポートが標準出力に出力されます
+meteor-shower run -o html > report.html
+```
+
 ## 使い方
+
+### 設定ファイルの生成
+
+まず、デフォルトの設定ファイルを生成します:
+
+```bash
+# カレントディレクトリに config.yaml を生成
+meteor-shower config init
+
+# カスタムファイル名で生成
+meteor-shower config init -o my-config.yaml
+
+# 既存ファイルを上書き
+meteor-shower config init -f
+```
+
+生成された `config.yaml` を編集して、ターゲットURLやテストパラメータを設定します。
 
 ### 基本的な使い方
 
@@ -58,6 +92,34 @@ meteor-shower run --rps 50 --concurrency 5 -o html
 | `--output` | `-o` | 設定ファイル参照 | 出力形式: html, json (設定ファイルより優先) |
 
 ### サブコマンド
+
+#### `config init` - 設定ファイルを生成
+
+デフォルトの設定ファイルを生成します。
+
+```bash
+meteor-shower config init [flags]
+```
+
+**フラグ:**
+- `-o, --output string`: 出力ファイルパス (デフォルト: "config.yaml")
+- `-f, --force`: 既存ファイルを上書き
+
+**例:**
+
+```bash
+# config.yaml を生成
+meteor-shower config init
+
+# カスタムファイル名で生成
+meteor-shower config init -o loadtest-config.yaml
+
+# 既存ファイルを上書き
+meteor-shower config init -f
+
+# ホームディレクトリに生成
+meteor-shower config init -o ~/.meteor-shower/config.yaml
+```
 
 #### `run` - 負荷試験を実行
 

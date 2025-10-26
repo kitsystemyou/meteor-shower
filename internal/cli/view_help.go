@@ -12,6 +12,7 @@ Usage:
 
 Available Commands:
   run         Run load test against target endpoint
+  config      Manage configuration files
   version     Print the version information
   help        Help about any command
 
@@ -30,6 +31,9 @@ func (c *CLI) helpCommand(command string) error {
 	switch command {
 	case "run":
 		return c.runCommand([]string{"--help"})
+	case "config":
+		c.printConfigUsage()
+		return nil
 	case "version":
 		return c.versionCommand([]string{"--help"})
 	default:

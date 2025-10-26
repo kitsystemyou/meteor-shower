@@ -31,6 +31,8 @@ func (c *CLI) Run() error {
 	switch command {
 	case "run":
 		return c.runCommand(c.args[1:])
+	case "config":
+		return c.configCommand(c.args[1:])
 	case "version":
 		return c.versionCommand(c.args[1:])
 	case "help":
